@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	list = list_create();
 
 	// append the values 0 to 9 to the list
-	printf("append valued 0 to 9\n");
+	printf("append values 0 to 9\n");
 	for(i=0; i<10; i++)
 	{
 		list_append(list, i);
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	}
 	list_print(list);
 
-	// remote the last value from the list
+	// remove the last value from the list
 	printf("remove the last value\n");
 	list_extract(list, 0);
 	list_print(list);

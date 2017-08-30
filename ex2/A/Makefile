@@ -1,5 +1,5 @@
 # program execcutable name
-TARGET = allocate
+TARGET = fork_test
 
 # compiler flags
 CFLAGS = -g -Wall

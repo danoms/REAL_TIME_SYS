@@ -1,5 +1,5 @@
 # program execcutable name
-TARGET = allocate
+TARGET = test_mem
 
 # compiler flags
 CFLAGS = -g -Wall

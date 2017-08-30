@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 		perror("Error: ");
 		
 	start = timeval.tv_usec;
-	start_cycles = cycleBuf.tms_cstime;
+	start_cycles = cycleBuf.tms_stime;
 	
 		while(check)
 		check = allocate(10);
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 		perror("Error: ");
 		
 	end = timeval.tv_usec;
-	end_cycles = cycleBuf.tms_cstime;
+	end_cycles = cycleBuf.tms_stime;
 	
 	printf("starts = %ld \nends = %ld \ntotal work = %ld \n",start, end, end - start);
 	printf("sarts_c = %ld\nends_c = %ld\ntotal_c = %ld\n",start_cycles, end_cycles, end_cycles - start_cycles);

@@ -1,8 +1,8 @@
 # program execcutable name
-TARGET = allocate
+TARGET = two_threads
 
 # compiler flags
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall 
 
 # linker flags
 LDFLAGS = -g -lrt
