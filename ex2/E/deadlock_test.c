@@ -7,6 +7,18 @@
 pthread_mutex_t forks[NUM_PHILOSOPHERS];
 //~ pthread_mutex_t fork1, fork2, fork3, fork4, fork5;
 
+void swap_if_larger( int* fork1, int* fork2)
+{
+		int temp;
+		if (*fork1 > *fork2)
+		{
+			temp = *fork1;
+			*fork1 = *fork2;
+			*fork2 = temp;
+		}
+		
+		return NULL;
+}
 
 void* eat( void* philosopher_num_p )
 {
@@ -15,6 +27,8 @@ void* eat( void* philosopher_num_p )
 		
 		int fork1 = philosopher_num;
 		int fork2 = (philosopher_num + 1) % NUM_PHILOSOPHERS; 
+		
+		swap_if_larger( &fork1, &fork2);
 		
 	while(1)
 	{
