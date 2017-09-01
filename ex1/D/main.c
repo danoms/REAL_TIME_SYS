@@ -6,13 +6,13 @@
 int main(int argc, char *argv[])
 {
 	/*
-		printf("wtf!\n");
+		printf("hmm!\n");
 		usleep(5000000);
-		printf("more wtf!!");
+		printf("more hmm!!\n");
 	*/
-		printf("wtf!\n");
+		printf("hmm!\n");
 		busy_wait_delay(5);
-		printf("more wtf!!");
+		printf("more hmm!!\n");
 		
 		return 0;
 }

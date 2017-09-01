@@ -5,23 +5,35 @@ int some_int_global = 1;
 
 int main(int argc, char* argv[])
 {
-		int pid;
-	
-		if ((pid = vfork()) == 0)
-			printf ("hello from the child\n");
-		else
-			printf ("hello from the parent\n");
-			
-		int some_int_local = 11;
-		
+		pid_t pid;
+		int some_int_local = 0;
 		some_int_global++;
 		some_int_local++;
 		
-		printf("int_g = %d, int_l = %d \n",
-			some_int_global,
-			some_int_local);
-		
 		
 			
+		pid = fork();
+		if (pid == 0)
+		{
+			printf ("hello from the child\n");
+			some_int_global++;
+			some_int_local++;
+			printf("global = %d, local = %d\n",some_int_local, some_int_global);
+			_exit(EXIT_SUCCESS);
+		}	
+		else
+		{
+			int status;
+			printf ("hello from the parent\n");
+			some_int_global++;
+			some_int_local++;
+			printf("global = %d, local = %d\n",some_int_local, some_int_global);
+			(void)waitpid(pid, &status, 0);
+		}
+		
+		some_int_global++;
+		some_int_local++;
+		printf(" final global = %d, local = %d\n",some_int_local, some_int_global);
+		
 		return 0;
 }
