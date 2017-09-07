@@ -10,14 +10,15 @@ pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 
 void* print_value(void* value_p)
 {
-	//~ pthread_mutex_lock( &mutex1 );
-		int* passed_value_p = value_p;
-		
-		some_int_global++;
-		(*passed_value_p)++;
-		printf("Hello world it's me thread printing value %d and global %d\n", *passed_value_p, some_int_global);
-	//~ pthread_mutex_unlock( &mutex1 );
-		return NULL;
+  pthread_mutex_lock( &mutex1 );
+
+  int* passed_value_p = value_p;  
+  some_int_global++;
+  (*passed_value_p)++;
+  
+  printf("Hello world it's me thread printing local value %d and global %d\n", *passed_value_p, some_int_global);
+  pthread_mutex_unlock( &mutex1 );
+  return NULL;
 }
 
 int main(int argc, char* argv[])
