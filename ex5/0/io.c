@@ -75,8 +75,10 @@ int main(int argc, char const *argv[])
 	while(1) 
 	{
 		int garbage;
+		int i;
+
 		mask = ~mask;
-	    for (int i = 0; i < 100000; ++i)
+	    for (i = 0; i < 10000000; ++i)
 	    {
 	    	garbage++;
 	    }

@@ -1,14 +1,18 @@
+#define _GNU_SOURCE
+
 #include "io.h"
-#include <strio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <assert.h>
+
 #include <sched.h>
+#include <unistd.h>
+
 
 #define NUM_WORK_THREADS 3
 #define DISTURBANCE_THREADS	10
-#define TEST_SIZE 	1000
-#define CPU_NUMBER 	1
+#define TEST_SIZE 	1100
+#define CPU_NUMBER 	0
 
 static comedi_t *it_g = NULL;
 int test_runs = 1;
@@ -66,33 +70,11 @@ int io_read(int channel)
 	}
 	else
 	{
-		printf("Incorrect io channel\n");
+		printf("Incorrect io channel : %d \n", channel);
 		return -1;
 	}
 
 
-}
-
-void *test_pin(void *index_p)
-{
-	set_cpu(CPU_NUMBER);
-	int counter = 0;
-
-	while(test_runs) {
-	   if (!io_read(*index_p))
-		{
-			io_write(*index_p,0);
-			counter++;
-			usleep(5000);
-			io_write(*index_p,1);
-			if (counter > TEST_SIZE)
-			{
-				test_runs = 0;	
-			}
-		}
-	}
-	
-	return 0;
 }
 
 int set_cpu(int cpu_number)
@@ -105,6 +87,30 @@ int set_cpu(int cpu_number)
 	// set cpu set to current thread and return
 	return pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpu);
 }
+
+void *test_pin(void *index_p)
+{
+	set_cpu(CPU_NUMBER);
+	int counter = 0;
+
+	while(test_runs) {
+	   if (!io_read(*(int*)index_p))
+		{
+			io_write(*(int*)index_p,0);
+			counter++;
+			usleep(5000);
+			io_write(*(int*)index_p,1);
+			if (counter > TEST_SIZE)
+			{
+				test_runs = 0;	
+			}
+		}
+	}
+	
+	return 0;
+}
+
+
 
 void *count_forever(void *value_p)
 {
@@ -123,7 +129,6 @@ void *count_forever(void *value_p)
 
 int main(int argc, char const *argv[])
 {
-	int mask = 2;
 
 	/*initialize pins on board*/
 	io_init();
@@ -133,39 +138,38 @@ int main(int argc, char const *argv[])
 	pthread_t dist_threads[DISTURBANCE_THREADS];
 	int thread_args[NUM_WORK_THREADS];
 	int result_code;
-	unsigned index;
 
 	/*create work_threads one by one*/
-	for (int index = 1; index <= NUM_WORK_THREADS; index++)
+	for (int index_work = 1; index_work <= NUM_WORK_THREADS; index_work++)
 	{
-		printf("In main: creating thread %d\n", index );
-		thread_args[index] = index;
-		result_code = pthread_create( &work_threads[index], NULL, test_pin, &thread_args[index]);
+		printf("In main: creating thread %d\n", index_work );
+		thread_args[index_work-1] = index_work;
+		result_code = pthread_create( &work_threads[index_work], NULL, test_pin, &thread_args[index_work-1]);
 		assert(!result_code);
 	}
 
-	for (int index = 0; index < DISTURBANCE_THREADS; index++)
-	{		
-		printf("In main: creating disturbance thread %d\n", index );
-		result_code = pthread_create( &dist_threads[index], NULL, count_forever, NULL);
-		assert(!result_code);
-	}
+	// for (int index = 0; index < DISTURBANCE_THREADS; index++)
+	// {		
+	// 	printf("In main: creating disturbance thread %d\n", index );
+	// 	result_code = pthread_create( &dist_threads[index], NULL, count_forever, NULL);
+	// 	assert(!result_code);
+	// }
 
 	/*wait for each work thread to complete*/
-	for (int index = 1; index <= NUM_WORK_THREADS; index++)
+	for (int index_work = 1; index_work <= NUM_WORK_THREADS; index_work++)
 	{
-		result_code = pthread_join( &work_threads[index], NULL);
+		result_code = pthread_join( work_threads[index_work], NULL);
 		assert(!result_code);
-		printf("In main: Work thread %d has completed\n", index );
+		printf("In main: Work thread %d has completed\n", index_work );
 	}
 
 	/*wait for disturbance threads to complete*/
-	for (int index = 0; index < DISTURBANCE_THREADS; index++)
-	{
-		result_code = pthread_join( &dist_threads[index], NULL);
-		assert(!result_code);
-		printf("In main: Disturbance thread %d has completed!\n", index);
-	}
+	// for (int index = 0; index < DISTURBANCE_THREADS; index++)
+	// {
+	// 	result_code = pthread_join( dist_threads[index], NULL);
+	// 	assert(!result_code);
+	// 	printf("In main: Disturbance thread %d has completed!\n", index);
+	// }
 
 	printf("In main: All work_threads completed successfully!\n");
 	exit(EXIT_SUCCESS);

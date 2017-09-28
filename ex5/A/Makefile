@@ -1,11 +1,12 @@
 # program execcutable name
-TARGET = io_test
+TARGET = io_test_blink
 
+COMPILER = gcc
 # compiler flags
 CFLAGS = -g -Wall
 
 # linker flags
-LDFLAGS = -g -lcomedi -lrt -pthread -D_GNU_SOURCE -lm
+LDFLAGS = -pthread -lcomedi -lm
 
 # list of sources 
 SOURCES = $(shell find -name "*.c")
@@ -18,11 +19,11 @@ OBJECTS = $(SOURCES:.c=.o)
 
 # link programs
 $(TARGET): $(OBJECTS)
-	gcc $(LDFLAGS) -o $@ $^
+	$(COMPILER) $^ $(LDFLAGS) -o $@ 
 	
 # compile
 %.o : %.c
-	gcc $(CFLAGS) -c -o $@ $<
+	$(COMPILER) $< $(CFLAGS) -c -o $@ 
 	
 # cleaning 
 clean:
