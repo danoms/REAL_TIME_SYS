@@ -1,0 +1,12 @@
+XENO_DESTDIR:=
+XENO_CONFIG:=$(XENO_DESTDIR)/usr/bin/xeno-config
+XENO_CFLAGS:=$(shell DESTDIR=$(XENO_DESTDIR) $(XENO_CONFIG) --skin native--cflags)
+XENO_LIBS:=$(shell DESTDIR=$(XENO_DESTDIR) $(XENO_CONFIG) --skin native --ldflags)
+
+CC := gcc   
+
+LDFLAGS += $(XENO_LIBS) -I/usr/include/xenomai 
+CFLAGS += $(XENO_CFLAGS) 
+
+all:  
+	$(CC) -o io io.c $(CFLAGS) $(LDFLAGS) -lcomedi -lm -D_GNU_SOURCE  
